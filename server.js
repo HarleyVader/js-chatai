@@ -5,6 +5,8 @@ const axios = require('axios');
 const bodyParser = require('body-parser');
 const socketIo = require('socket.io');
 const http = require('http');
+const fs = require('fs');
+const path = require('path');
 require('dotenv').config();
 
 const numWorkers = 1; // os.cpus().length; // Use all available CPU cores
@@ -37,8 +39,12 @@ if (cluster.isMaster) {
     io.on('connection', (socket) => {
         console.log('A user connected');
 
-        socket.on('chat message', async (message) => {
+        socket.on('chat message', async (data) => {
+            console.log('Received data:', data);
+
             try {
+                const { postPrompt, message } = data;
+
                 if (!message) {
                     console.error('Message is required.');
                     return;
@@ -46,24 +52,23 @@ if (cluster.isMaster) {
 
                 console.log('Received message:', message);
 
+                // Read the openai-template.json file
+                const templatePath = path.join(__dirname, '/public/templates/bambisleep.json');
+                
+                if (!fs.existsSync(templatePath)) {
+                    console.error('Template file does not exist.');
+                    return;
+                }
+
+                const prePromptContent = fs.readFileSync(templatePath, 'utf8');
+
+                const prompt = `${prePromptContent}\n${message}\n${postPrompt}`;
+
                 const response = await axios.post(
                     'https://api.openai.com/v1/completions',
                     {
-                        model: 'gpt-3.5-turbo-instruct-0914',  // Specify the model you wish to use from the posbile options below
-                        /* 
-                        davinci-002
-                        babbage-002
-                        gpt-4
-                        gpt-4-turbo
-                        gpt-4-0613
-                        gpt-3.5-turbo
-                        gpt-3.5-turbo-0613
-                        gpt-3.5-turbo-1106
-                        gpt-3.5-turbo-instruct-0914
-                        gpt-3.5-turbo-0301
-                        gpt-3.5-turbo-0125
-                        */
-                        prompt: message,
+                        model: 'gpt-3.5-turbo-instruct-0914',
+                        prompt: prompt,
                         max_tokens: 150,
                     },
                     {
