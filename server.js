@@ -50,7 +50,8 @@ if (cluster.isMaster) {
                     'https://api.openai.com/v1/completions',
                     {
                         model: 'gpt-3.5-turbo-instruct-0914',  // Specify the model you wish to use from the posbile options below
-                        /*davinci-002
+                        /* 
+                        davinci-002
                         babbage-002
                         gpt-4
                         gpt-4-turbo
