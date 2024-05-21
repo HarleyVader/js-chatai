@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat with AI by melkanea</title>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="client.js" defer></script>
+    <style>
+        #chat-container {
+            display: flex;
+            height: 100vh;
+        }
+        #user-input, #ai-reply {
+            width: 35%;
+            padding: 1em;
+            overflow-y: auto;
+        }
+        #ai-reply {
+            width: 55%;
+            border-left: 1px solid #000;
+        }
+        #send-button {
+            width: 10%;
+            padding: 1em;
+            border-left: 1px solid #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body>
+    <div id="chat-container">
+        <div id="user-input">
+            <input type="text" id="message" placeholder="Type your message here...">
+            <button id="send">Send</button>
+        </div>
+        <div id="ai-reply"></div>
+        <div id="send-button"></div>
+    </div>
+</body>
+</html>

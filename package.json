@@ -1,0 +1,40 @@
+{
+  "name": "js-chatai",
+  "version": "1.0.0",
+  "description": "melkaneas javascript nodejs express socket.io http chatAI",
+  "main": "server.js",
+  "scripts": {
+    "test": "node server.js",
+    "start": "node server.js"
+  },
+  "keywords": [
+    "melkaneas",
+    "javascript",
+    "nodejs",
+    "express",
+    "socket.io",
+    "http",
+    "chatAI"
+  ],
+  "author": "melkanea",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.7.1",
+    "body-parser": "^1.20.2",
+    "cluster": "^0.7.7",
+    "dialogflow": "^4.0.3",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "os": "^0.1.2",
+    "socket.io": "^4.7.5"
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/HarleyVader/js-chatai.git"
+  },
+  "bugs": {
+    "url": "https://github.com/HarleyVader/js-chatai/issues"
+  },
+  "homepage": "https://github.com/HarleyVader/js-chatai#readme"
+}
