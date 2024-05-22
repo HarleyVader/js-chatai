@@ -22,7 +22,6 @@
     "axios": "^1.7.1",
     "body-parser": "^1.20.2",
     "child_process": "^1.0.2",
-    "cluster": "^0.7.7",
     "dialogflow": "^4.0.3",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",

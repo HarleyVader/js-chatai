@@ -17,15 +17,6 @@ function sendMessage() {
   document.getElementById('message').value = '';
 }
 
-// Listen for 'chat message' events from the server
-socket.on('chat message', function(msg) {
-  console.log('Received chat message:', msg); // Debug log
-  var node = document.createElement('p');
-  var textnode = document.createTextNode(msg);
-  node.appendChild(textnode);
-  document.getElementById('ai-reply').appendChild(node);
-});
-
 // Listen for 'chat error' events from the server
 socket.on('chat error', function(err) {
   console.log('Received chat error:', err); // Debug log
