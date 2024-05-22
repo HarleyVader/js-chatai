@@ -61,7 +61,7 @@ io.on('connection', (socket) => {
             console.log('Received message:', message);
 
             // Read the pre-prompt content from the file
-            const templatePath = path.join(__dirname, '/public/templates/bambisleep-HC.json');
+            const templatePath = path.join(__dirname, '/public/templates/bambi-hc.json');
 
             if (!fs.existsSync(templatePath)) {
                 console.error('Template file does not exist.');
