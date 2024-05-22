@@ -1,5 +1,5 @@
 const cluster = require('cluster');
-const child_process = require('child_process');
+const os = require('os');
 const express = require('express');
 const axios = require('axios');
 const bodyParser = require('body-parser');
@@ -9,8 +9,14 @@ const fs = require('fs');
 const path = require('path');
 require('dotenv').config();
 
+const numWorkers = 1 //os.cpus().length; // Use all available CPU cores
+
 if (cluster.isMaster) {
-    console.log(`Master process is running with PID ${process.pid}.`);
+    console.log(`Master process is running with PID ${process.pid}. Creating ${numWorkers} workers.`);
+
+    for (let i = 0; i < numWorkers; i++) {
+        cluster.fork();
+    }
 
     cluster.on('exit', (worker, code, signal) => {
         console.log(`Worker ${worker.process.pid} died. Restarting...`);
@@ -39,30 +45,31 @@ if (cluster.isMaster) {
     io.on('connection', (socket) => {
         console.log('A user connected');
 
-        const worker = child_process.fork('./path/to/worker/script.js');
-
-        // Handle messages from the worker
-        worker.on('message', (message) => {
-            console.log(`Received message from worker: ${message}`);
-        });
-
-        // Handle worker exit
-        worker.on('exit', (code, signal) => {
-            console.log(`Worker exited with code ${code} and signal ${signal}`);
-        });
-
-        // Handle worker error
-        worker.on('error', (err) => {
-            console.error('Error occurred in worker:', err);
-        });
-
-        // Send a message to the worker
-        worker.send('start');
-
         let conversation = [];
 
-        socket.on('chat message', async (message) => {
+        socket.on('chat message', async (data) => {
+            console.log('Received data:', data);
+
             try {
+                let { message } = data;
+
+                if (!message) {
+                    console.error('Message is required.');
+                    return;
+                }
+
+                console.log('Received message:', message);
+
+                // Read the pre-prompt content from the file
+                const templatePath = path.join(__dirname, '/public/templates/bambisleep.json');
+
+                if (!fs.existsSync(templatePath)) {
+                    console.error('Template file does not exist.');
+                    return;
+                }
+
+                const prePromptContent = fs.readFileSync(templatePath, 'utf8');
+
                 // Add the new message to the conversation history
                 conversation.push(`You: ${message}`);
 
@@ -94,7 +101,7 @@ if (cluster.isMaster) {
                     conversation = conversation.slice(-5); // Keep the last 5 messages
                 }
 
-                // io.emit('chat message', result);
+               // io.emit('chat message', result);
             } catch (error) {
                 console.error('OpenAI request failed:', error);
                 socket.emit('chat error', 'Failed to get a response from OpenAI.');
