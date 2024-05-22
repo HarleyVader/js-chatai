@@ -4,17 +4,16 @@ var socket = io();
 // Function to send a message to the server
 function sendMessage() {
   console.log('SendMessage function called'); // Debug log
-  var postPrompt = document.getElementById('post-prompt').value;
   var message = document.getElementById('message').value;
 
   if (message.trim() !== '') {
-    console.log('Sending message:', { postPrompt, message }); // Debug log
-    socket.emit('chat message', { postPrompt, message });
+    console.log('Sending message:', { message }); // Debug log
+    socket.emit('chat message', { message });
   } else {
     console.log('Message is empty'); // Debug log
   }
 
-  document.getElementById('post-prompt').value = '';
+  // Clear input fields after sending
   document.getElementById('message').value = '';
 }
 
@@ -45,4 +44,24 @@ document.getElementById('message').addEventListener('keypress', function (e) {
   if (e.key === 'Enter') {
     sendMessage();
   }
+});
+
+// Optional: Store the last reply for continuity
+let lastReply = '';
+
+socket.on('chat message', function(msg) {
+    var node = document.createElement('p');
+    var textnode = document.createTextNode(msg);
+    node.appendChild(textnode);
+    document.getElementById('ai-reply').appendChild(node);
+    lastReply = msg; // Store the last reply
+});
+
+$('form').submit(function(e) {
+    e.preventDefault(); // Prevents page reloading
+    socket.emit('chat message', {
+        message: $('#message').val() // Only send message now
+    });
+    $('#message').val('');
+    return false;
 });

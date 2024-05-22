@@ -9,7 +9,7 @@ const fs = require('fs');
 const path = require('path');
 require('dotenv').config();
 
-const numWorkers = 1; // os.cpus().length; // Use all available CPU cores
+const numWorkers = 1; //os.cpus().length; // Use all available CPU cores
 
 if (cluster.isMaster) {
     console.log(`Master process is running with PID ${process.pid}. Creating ${numWorkers} workers.`);
@@ -39,11 +39,13 @@ if (cluster.isMaster) {
     io.on('connection', (socket) => {
         console.log('A user connected');
 
+        let lastReply = '';
+
         socket.on('chat message', async (data) => {
             console.log('Received data:', data);
 
             try {
-                const { postPrompt, message } = data;
+                let { message } = data;
 
                 if (!message) {
                     console.error('Message is required.');
@@ -52,24 +54,28 @@ if (cluster.isMaster) {
 
                 console.log('Received message:', message);
 
+                // If there's a last reply, prepend it to the message
+                if (lastReply) {
+                    message = `${lastReply}\n${message}`;
+                }
+
                 // Read the openai-template.json file
                 const templatePath = path.join(__dirname, '/public/templates/bambisleep.json');
-                
+
                 if (!fs.existsSync(templatePath)) {
                     console.error('Template file does not exist.');
                     return;
                 }
 
                 const prePromptContent = fs.readFileSync(templatePath, 'utf8');
-
-                const prompt = `${prePromptContent}\n${message}\n${postPrompt}`;
+                const prompt = `${prePromptContent}\n${message}`;
 
                 const response = await axios.post(
                     'https://api.openai.com/v1/completions',
                     {
-                        model: 'gpt-3.5-turbo-instruct-0914',
+                        model: 'gpt-3.5-turbo-instruct-0914', // Reverted model
                         prompt: prompt,
-                        max_tokens: 150,
+                        max_tokens: 150
                     },
                     {
                         headers: {
@@ -82,10 +88,11 @@ if (cluster.isMaster) {
                 console.log('OpenAI API Response:', response.data);
 
                 const result = response.data.choices[0].text.trim();
+                lastReply = result; // Store the last reply
                 io.emit('chat message', result);
             } catch (error) {
                 console.error('OpenAI request failed:', error);
-                io.emit('chat error', 'An error occurred while processing your message');
+                socket.emit('chat error', 'Failed to get a response from OpenAI.');
             }
         });
 
