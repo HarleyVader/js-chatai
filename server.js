@@ -9,7 +9,7 @@ const fs = require('fs');
 const path = require('path');
 require('dotenv').config();
 
-const numWorkers = 1; //os.cpus().length; // Use all available CPU cores
+const numWorkers = 1 //os.cpus().length; // Use all available CPU cores
 
 if (cluster.isMaster) {
     console.log(`Master process is running with PID ${process.pid}. Creating ${numWorkers} workers.`);
@@ -36,10 +36,16 @@ if (cluster.isMaster) {
         throw new Error('OPENAI_API_KEY is not defined in the environment variables');
     }
 
+    // Function to construct the prompt
+    function buildPrompt(prePromptContent, conversation) {
+        const conversationHistory = conversation.join('\n');
+        return `${prePromptContent}\n${conversationHistory}`;
+    }
+
     io.on('connection', (socket) => {
         console.log('A user connected');
 
-        let lastReply = '';
+        let conversation = [];
 
         socket.on('chat message', async (data) => {
             console.log('Received data:', data);
@@ -54,12 +60,7 @@ if (cluster.isMaster) {
 
                 console.log('Received message:', message);
 
-                // If there's a last reply, prepend it to the message
-                if (lastReply) {
-                    message = `${lastReply}\n${message}`;
-                }
-
-                // Read the openai-template.json file
+                // Read the pre-prompt content from the file
                 const templatePath = path.join(__dirname, '/public/templates/bambisleep.json');
 
                 if (!fs.existsSync(templatePath)) {
@@ -68,12 +69,17 @@ if (cluster.isMaster) {
                 }
 
                 const prePromptContent = fs.readFileSync(templatePath, 'utf8');
-                const prompt = `${prePromptContent}\n${message}`;
+
+                // Add the new message to the conversation history
+                conversation.push(`You: ${message}`);
+
+                // Build the full prompt
+                const prompt = buildPrompt(prePromptContent, conversation);
 
                 const response = await axios.post(
                     'https://api.openai.com/v1/completions',
                     {
-                        model: 'gpt-3.5-turbo-instruct-0914', // Reverted model
+                        model: 'gpt-3.5-turbo-instruct-0914', // Using the specified model
                         prompt: prompt,
                         max_tokens: 150
                     },
@@ -88,7 +94,13 @@ if (cluster.isMaster) {
                 console.log('OpenAI API Response:', response.data);
 
                 const result = response.data.choices[0].text.trim();
-                lastReply = result; // Store the last reply
+                conversation.push(`AI: ${result}`); // Add the model's response to the conversation
+
+                if (conversation.length > 10) {
+                    console.log('Resetting conversation context...');
+                    conversation = conversation.slice(-5); // Keep the last 5 messages
+                }
+
                 io.emit('chat message', result);
             } catch (error) {
                 console.error('OpenAI request failed:', error);
