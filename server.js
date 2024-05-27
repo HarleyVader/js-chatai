@@ -90,9 +90,10 @@ io.on('connection', (socket) => {
     });
 });
 
-app.get('/api', (req, res) => {
-    res.send('Hello from the API endpoint!');
-});
+// Add the /bambi endpoint
+app.get('/bambi', (req, res) => {
+    res.send('Hello Bambi');
+    });
 
 server.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`);
