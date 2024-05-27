@@ -1,0 +1,59 @@
+<header>
+      <div class="container">
+        <div class="row">
+          <div class="col col-12">
+            <nav class="navbar navbar-dark d-flex">
+              <div
+                class="navbar-brand logo col-12 col-sm-3 col-lg-3 mr-auto p-2"
+              >
+              <a href="/">
+                  <img
+                    class="img-fluid"
+                    src="https://brandynette.xxx/wp-content/uploads/2024/02/brandynette.xxx-2560x640-1-300x75.jpg"
+                    alt="Logo"
+                  />
+                </a>
+              </div>
+              <div id="timer">00:00:00</div>
+              <div class="p-2" id="brandy-landing">
+                <a href="https://brandynette.xxx/bn-sissy/brandy-landing.html">
+                brandynette.xxx
+                </a>
+              </div>
+            </nav>
+          </div>
+        </div>
+      </div>
+</header>
+<script>
+function startTimer() {
+
+  let seconds = 0;
+  let minutes = 0;
+  let hours = 0;
+
+  function updateTimer() {
+    seconds++;
+    if (seconds === 60) {
+      seconds = 0;
+      minutes++;
+      if (minutes === 60) {
+        minutes = 0;
+        hours++;
+      }
+    }
+
+    const formattedTime = padNumber(hours) + ':' + padNumber(minutes) + ':' + padNumber(seconds);
+    document.getElementById('timer').innerText = formattedTime;
+  }
+
+  function padNumber(num) {
+    return num < 10 ? '0' + num : num;
+  }
+
+  setInterval(updateTimer, 1000); // Update every second
+}
+
+// Start the timer when the page loads
+startTimer();
+</script>

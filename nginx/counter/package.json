@@ -1,0 +1,36 @@
+{
+  "name": "counter",
+  "version": "0.1.2",
+  "description": "melkanea javascript video play counter",
+  "main": "app.js",
+  "scripts": {
+    "test": "npm run app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/HarleyVader/javascript-video-play-counter.git"
+  },
+  "keywords": [
+    "javascript",
+    "express",
+    "body-parser",
+    "ejs",
+    "path",
+    "fs",
+    "level",
+    "https",
+    "nginx"
+  ],
+  "author": "melkanea",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/HarleyVader/javascript-video-play-counter/issues"
+  },
+  "homepage": "https://github.com/HarleyVader/javascript-video-play-counter#readme",
+  "dependencies": {
+    "body-parser": "^1.20.2",
+    "ejs": "^3.1.9",
+    "express": "^4.18.2",
+    "level": "^8.0.1"
+  }
+}

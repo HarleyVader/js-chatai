@@ -1,0 +1,32 @@
+ <!--Cookie Banner-->
+<div class="cookie-banner" id="cookieBanner">
+            <p>
+                This website uses cookies to ensure you get the best experience
+                on our website.
+            </p>
+            <button class="accept-btn" onclick="acceptCookies()">Accept</button>
+            <button class="decline-btn" onclick="declineCookies()">
+                Decline
+            </button>
+        </div>
+        <script>
+            function acceptCookies() {
+                document.getElementById("cookieBanner").style.display = "none";
+                // Set a cookie named "cookieConsent" with a value of "accepted" that expires in 365 days
+                var expirationDate = new Date();
+                expirationDate.setDate(expirationDate.getDate() + 365);
+                document.cookie = "cookieConsent=accepted; expires=" + expirationDate.toUTCString() + "; path=/";
+            }
+            function declineCookies() {
+                document.getElementById("cookieBanner").style.display = "none";
+                // Set a cookie named "cookieConsent" with a value of "declined" that expires in 365 days
+                var expirationDate = new Date();
+                expirationDate.setDate(expirationDate.getDate() + 365);
+                document.cookie = "cookieConsent=declined; expires=" + expirationDate.toUTCString() + "; path=/";
+            }
+            // Check if the user has previously accepted cookies
+            // If yes, hide the banner
+            if (document.cookie.indexOf("cookieConsent=accepted") !== -1) {
+                document.getElementById("cookieBanner").style.display = "none";
+            }
+        </script>

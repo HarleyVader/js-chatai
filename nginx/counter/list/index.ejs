@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>api</title>
+  </head>
+  <body>
+    <p>API CALL</p>
+    <div id="view-list">list</div>
+    <div>TotalViews: <%= totalViews %></div>
+
+    <% if (totalViews,list) { %>
+    <script>
+            var viewCounter = <%- JSON.stringify(list) %>;
+
+            var ele = document.getElementById("view-list");
+      viewCounter.forEach(v => {
+          let itemEl = document.createElement("div");
+          itemEl.innerHTML = `Video: ${v.key} Views : ${v.value}`
+          ele.append(itemEl);
+      })
+    </script>
+
+    <% } %>
+  </body>
+</html>
