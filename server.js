@@ -91,7 +91,7 @@ io.on('connection', (socket) => {
 });
 
 // Add the /bambi endpoint
-app.get('/', (req, res) => {
+app.get('/bambi', (req, res) => {
     res.send('Hello Bambi');
     });
 
