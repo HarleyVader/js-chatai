@@ -37,7 +37,7 @@ io.on('connection', (socket) => {
         console.log('OpenAI API Response:', response);
 
         const result = response.choices[0].text.trim();
-        conversation.push(`AI: ${result}`); // Add the model's response to the conversation
+        conversation.push(`${result}`); // Add the model's response to the conversation
 
         if (conversation.length > 10) {
             console.log('Resetting conversation context...');
@@ -61,7 +61,7 @@ io.on('connection', (socket) => {
             console.log('Received message:', message);
 
             // Read the pre-prompt content from the file
-            const templatePath = path.join(__dirname, '/public/templates/bambisleep.json');
+            const templatePath = path.join(__dirname, '/public/templates/bambi-hc.json');
 
             if (!fs.existsSync(templatePath)) {
                 console.error('Template file does not exist.');
