@@ -95,7 +95,7 @@ app.get('/bambi', (req, res) => {
     res.send('Hello Bambi');
     });
 
-server.listen(port, '192.168.0.59', () => {
+server.listen(port, '0.0.0.0', () => {
     console.log(`Server is running on https://bambisleep.chat:${port}`);
 }).on('error', (err) => {
     console.error('Error occurred while starting the server:', err);
