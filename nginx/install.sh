@@ -36,16 +36,11 @@ if [ $? -ne 0 ]; then
 fi
 
 home=/home
-userapp=$(basename "$PWD")
-if [ $? -ne 0 ]; then
-    echo -e "${red}Failed to get basename of current directory${coloroff}"
-    exit 1
-fi
 
 domain=bambisleep.chat
 
 nodeapp=js-chatai
-docroot=$home/$user/web/$domain/$nodeapp/$userapp
+docroot=$home/$user/web/$domain/$nodeapp
 
 echo -e $magenta "user: "$user $coloroff
 echo -e $red "domain: "$domain $coloroff
