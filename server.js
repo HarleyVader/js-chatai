@@ -11,7 +11,7 @@ require('dotenv').config();
 const app = express();
 const server = http.createServer(app);
 const io = socketIo(server);
-const port = process.env.PORT || 3000; // Use environment port if available
+const port = process.env.PORT || 6969; // Use environment port if available
 
 app.use(bodyParser.json());
 app.use(express.static('public'));
@@ -61,7 +61,7 @@ io.on('connection', (socket) => {
             console.log('Received message:', message);
 
             // Read the pre-prompt content from the file
-            const templatePath = path.join(__dirname, '/public/templates/bambi-hc.json');
+            const templatePath = path.join(__dirname, '/public/templates/bambisleep.json');
 
             if (!fs.existsSync(templatePath)) {
                 console.error('Template file does not exist.');
@@ -88,6 +88,10 @@ io.on('connection', (socket) => {
         console.log('A user disconnected');
         worker.kill(); // Kill the worker when the user disconnects
     });
+});
+
+app.get('/api', (req, res) => {
+    res.send('Hello from the API endpoint!');
 });
 
 server.listen(port, () => {
