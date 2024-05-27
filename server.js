@@ -14,7 +14,25 @@ const io = socketIo(server);
 const port = process.env.PORT || 6969; // Use environment port if available
 
 app.use(bodyParser.json());
-app.use(express.static('public'));
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Check if all files in the public directory exist and are accessible
+fs.readdir(path.join(__dirname, 'public'), (err, files) => {
+    if (err) {
+        console.error('Error reading public directory:', err);
+        return;
+    }
+
+    files.forEach(file => {
+        fs.access(path.join(__dirname, 'public', file), fs.constants.F_OK | fs.constants.R_OK, (err) => {
+            if (err) {
+                console.error(`File ${file} is not accessible:`, err);
+            } else {
+                console.log(`File ${file} is accessible.`);
+            }
+        });
+    });
+});
 
 const openaiApiKey = process.env.OPENAI_API_KEY;
 if (!openaiApiKey) {
@@ -93,7 +111,12 @@ io.on('connection', (socket) => {
 // Add the /bambi endpoint
 app.get('/bambi', (req, res) => {
     res.send('Hello Bambi');
-    });
+});
+
+// Serve the index.html file
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
 
 server.listen(port, () => {
     console.log(`Server is running on https://bambisleep.chat:${port}`);
