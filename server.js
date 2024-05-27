@@ -11,7 +11,7 @@ require('dotenv').config();
 const app = express();
 const server = http.createServer(app);
 const io = socketIo(server);
-const port = process.env.PORT || 6969; // Use environment port if available
+const port = process.env.PORT || 443; // Use environment port if available
 
 app.use(bodyParser.json());
 app.use(express.static('public'));
