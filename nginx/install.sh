@@ -39,7 +39,7 @@ home=/home
 
 domain=bambisleep.chat
 
-nodeapp=test
+nodeapp=js-chatai
 docroot=$home/$user/web/$domain/$nodeapp
 
 echo -e $magenta "user: "$user $coloroff
