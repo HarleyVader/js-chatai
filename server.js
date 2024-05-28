@@ -42,7 +42,7 @@ io.on('connection', async (socket) => {
     let context = {};
 
     // Read the pre-prompt content from the file
-    const templatePath = path.join(__dirname, '/public/templates/bambi-hc.json');
+    const templatePath = path.join(__dirname, '/public/templates/bambisleep-HC_0.0.3.json');
 
     if (!fs.existsSync(templatePath)) {
         console.error('Template file does not exist.');
