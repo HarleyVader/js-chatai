@@ -25,7 +25,7 @@ process.on('message', async ({ prompt, id }) => {
             {
                 model: 'gpt-3.5-turbo-instruct-0914', // Using the specified model
                 prompt: prompt,
-                max_tokens: 150
+                max_tokens: 450
             },
             {
                 headers: {
