@@ -35,7 +35,7 @@ process.on('message', async ({ prompt, id }) => {
         const response = await axios.post(
             'https://api.openai.com/v1/completions',
             {
-                model: 'gpt-3.5-turbo-instruct', // Using the specified model
+                model: 'gpt-3.5-turbo', // Using the specified model
                 prompt: prompt,
                 max_tokens: 450
             },
