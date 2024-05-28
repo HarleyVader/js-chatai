@@ -32,7 +32,7 @@ function updateContext(context, userInput, botOutput) {
     return updatedContext;
 }
 
-io.on('connection', (socket) => {
+io.on('connection', async (socket) => {
     console.log('A user connected');
 
     // Spawn a new worker for each user
@@ -40,6 +40,19 @@ io.on('connection', (socket) => {
 
     let conversation = [];
     let context = {};
+
+    // Read the pre-prompt content from the file
+    const templatePath = path.join(__dirname, '/public/templates/bambisleep-HC_0.0.4.json');
+
+    if (!fs.existsSync(templatePath)) {
+        console.error('Template file does not exist.');
+        return;
+    }
+
+    const prePromptContent = fs.readFileSync(templatePath, 'utf8');
+
+    // Prompt the AI with the prePromptContent on user connect
+    worker.send({ prompt: prePromptContent });
 
     worker.on('message', (response) => {
         console.log('OpenAI API Response:', response);
@@ -50,7 +63,7 @@ io.on('connection', (socket) => {
 
         if (conversation.length > 10) {
             console.log('Resetting conversation context...');
-            conversation = conversation.slice(-5); // Keep the last 5 messages
+            conversation = conversation.slice(-1); // Keep the last 5 messages
         }
 
         socket.emit('chat message', result); // Send the result to the client
@@ -69,23 +82,13 @@ io.on('connection', (socket) => {
 
             console.log('Received message:', message);
 
-            // Read the pre-prompt content from the file
-            const templatePath = path.join(__dirname, '/public/templates/bs-persona.json');
-
-            if (!fs.existsSync(templatePath)) {
-                console.error('Template file does not exist.');
-                return;
-            }
-
-            const prePromptContent = fs.readFileSync(templatePath, 'utf8');
-
             // Add the new message to the conversation history
             conversation.push(`${message}`);
-            
+            context = updateContext(context, `${message}`, '');
+
             // Build the full prompt with the last message only
             const prompt = buildPrompt(prePromptContent, `${message}`);
 
-            context = updateContext(context, `${message}`, '');
             // Send the prompt to the worker
             worker.send({ prompt });
         } catch (error) {
