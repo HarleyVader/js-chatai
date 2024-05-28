@@ -8,6 +8,9 @@ function sendMessage() {
 
   if (message.trim() !== '') {
     socket.emit('chat message', { message, preprompt });
+    
+    // Update the user-message div
+    document.getElementById('user-message').innerText = message;
   }
 
   // Clear input fields after sending
@@ -33,7 +36,7 @@ socket.on('chat error', function(err) {
 document.getElementById('set').addEventListener('click', function() {
   const preprompt = document.getElementById('preprompt').value;
   socket.emit('set preprompt', { preprompt });
-  
+
   // Update the ai-preprompt div
   document.getElementById('ai-preprompt').innerText = preprompt;
 });
