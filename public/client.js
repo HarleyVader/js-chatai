@@ -15,7 +15,13 @@ function sendMessage() {
   document.getElementById('preprompt').value = '';
 }
 
-// Listen for 'chat error' events from the server
+// Function to show preprompt to the user
+function showPreprompt() {
+  var preprompt = document.getElementById('preprompt').value;
+  document.getElementById('ai-preprompt').innerText = preprompt;
+}
+
+// Listen for chat error events from the server
 socket.on('chat error', function(err) {
   var node = document.createElement('p');
   var textnode = document.createTextNode('Error: ' + err);
@@ -24,8 +30,19 @@ socket.on('chat error', function(err) {
   document.getElementById('ai-reply').appendChild(node);
 });
 
+document.getElementById('set').addEventListener('click', function() {
+  const preprompt = document.getElementById('preprompt').value;
+  socket.emit('set preprompt', { preprompt });
+  
+  // Update the ai-preprompt div
+  document.getElementById('ai-preprompt').innerText = preprompt;
+});
+
 // Attach the sendMessage function to the send button
 document.getElementById('send').onclick = sendMessage;
+
+// Attach showPreprompt function to the showPreprompt button
+document.getElementById('ai-preprompt').onclick = preprompt;
 
 // Attach sendMessage function to the enter key
 document.getElementById('message').addEventListener('keypress', function (e) {

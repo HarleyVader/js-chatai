@@ -25,6 +25,7 @@
     "dialogflow": "^4.0.3",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
+    "io": "^1.5.0",
     "socket.io": "^4.7.5"
   },
   "repository": {

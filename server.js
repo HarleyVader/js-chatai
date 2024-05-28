@@ -21,8 +21,8 @@ if (!openaiApiKey) {
     throw new Error('OPENAI_API_KEY is not defined in the environment variables');
 }
 
-function buildPrompt(prePromptContent, lastMessage) {
-    return `${prePromptContent}\n${lastMessage}`;
+function buildPrompt(preprompt, lastMessage) {
+    return `${preprompt} \n ${lastMessage}`;
 }
 
 function updateContext(context, userInput, botOutput) {
@@ -32,27 +32,18 @@ function updateContext(context, userInput, botOutput) {
     return updatedContext;
 }
 
+let clientCount = 0;
+
 io.on('connection', async (socket) => {
     console.log('A user connected');
+    clientCount++;
+    console.log(`Number of connected clients: ${clientCount}`);
 
     // Spawn a new worker for each user
     const worker = child_process.fork('./worker.js');
 
     let conversation = [];
     let context = {};
-
-    // Read the pre-prompt content from the file
-    const templatePath = path.join(__dirname, '/public/templates/bambisleep-rp_0.0.2.json');
-
-    if (!fs.existsSync(templatePath)) {
-        console.error('Template file does not exist.');
-        return;
-    }
-
-    const prePromptContent = fs.readFileSync(templatePath, 'utf8');
-
-    // Prompt the AI with the prePromptContent on user connect
-    worker.send({ prompt: prePromptContent });
 
     worker.on('message', (response) => {
         console.log('OpenAI API Response:', response);
@@ -67,6 +58,30 @@ io.on('connection', async (socket) => {
         }
 
         socket.emit('chat message', result); // Send the result to the client
+    });
+
+    socket.on('set preprompt', async (data) => {
+        console.log('Received preprompt:', data);
+
+        try {
+            let { preprompt } = data;
+
+            if (!preprompt) {
+                console.error('Preprompt is required.');
+                return;
+            }
+
+            console.log('Received preprompt:', preprompt);
+
+            // Build the prompt using the received preprompt and the last message from the conversation
+            const prompt = buildPrompt(preprompt, conversation[conversation.length - 1]);
+
+            // Send the built prompt to the worker
+            worker.send({ prompt });
+        } catch (error) {
+            console.error('OpenAI request failed:', error);
+            socket.emit('chat error', 'Failed to get a response from OpenAI.');
+        }
     });
 
     socket.on('chat message', async (data) => {
@@ -86,8 +101,8 @@ io.on('connection', async (socket) => {
             conversation.push(`${message}`);
             context = updateContext(context, `${message}`, '');
 
-            // Build the full prompt with the last message only
-            const prompt = buildPrompt(preprompt, `${message}`);
+            // Use the pre-prompt from the client
+            const prompt = `${preprompt}\n${message}`;
 
             // Send the prompt to the worker
             worker.send({ prompt });
@@ -99,6 +114,8 @@ io.on('connection', async (socket) => {
 
     socket.on('disconnect', () => {
         console.log('A user disconnected');
+        clientCount--;
+        console.log(`Number of connected clients: ${clientCount}`);
         worker.kill(); // Kill the worker when the user disconnects
     });
 });

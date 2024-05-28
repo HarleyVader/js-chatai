@@ -22,7 +22,6 @@
         #chat-container {
             display: flex;
             height: 100vh;
-            background-color: var(--primary-color);
         }
         #user-input, #ai-reply {
             width: 35%;
@@ -32,14 +31,19 @@
             
         }
         #ai-preprompt {
-            width: 35%;
-            border-bottom: 1px solid #000;
+            width: 100%;
+            border-top: 1px solid var(--button-color);
+            border-bottom: 1px solid var(--button-color);
             background-color: var(--primary-color);
+            color: var(--tertiary-color);
+            margin-top: 1em;
+            padding-bottom: 1em;
         }
         #ai-reply {
             width: 55%;
             border-left: 1px solid #000;
             background-color: var(--primary-color);
+            color: var(--tertiary-color);
         }
         
         #send-button {
@@ -60,7 +64,6 @@
         button {
             margin-top: 10px;
             border-radius: 3.14rem;
-            font: var(--tertiary-color);
             font-weight: bold;
             background-color: var(--button-color);
         }
@@ -73,6 +76,8 @@
     <div id="chat-container">
         <div id="user-input">
             <textarea id="preprompt" placeholder="Tell bambi AI how to behave & what she needs to do!"></textarea>
+            <button id="set">Set</button>
+            <br>
             <div id="ai-preprompt"></div>
             <br>
             <textarea id="message" placeholder="Enter your message"></textarea>
