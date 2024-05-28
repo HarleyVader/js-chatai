@@ -45,7 +45,7 @@ io.on('connection', (socket) => {
         console.log('OpenAI API Response:', response);
 
         const result = response.choices[0].text.trim();
-        conversation.push(`Bot: ${result}`); // Add the model's response to the conversation
+        conversation.push(`${result}`); // Add the model's response to the conversation
         context = updateContext(context, '', `${result}`);
 
         if (conversation.length > 10) {
@@ -70,7 +70,7 @@ io.on('connection', (socket) => {
             console.log('Received message:', message);
 
             // Read the pre-prompt content from the file
-            const templatePath = path.join(__dirname, '/public/templates/bambisleep-HC_0.0.2.json');
+            const templatePath = path.join(__dirname, '/public/templates/bs-persona.json');
 
             if (!fs.existsSync(templatePath)) {
                 console.error('Template file does not exist.');
@@ -81,11 +81,11 @@ io.on('connection', (socket) => {
 
             // Add the new message to the conversation history
             conversation.push(`${message}`);
-            context = updateContext(context, `${message}`, '');
-
+            
             // Build the full prompt with the last message only
             const prompt = buildPrompt(prePromptContent, `${message}`);
 
+            context = updateContext(context, `${message}`, '');
             // Send the prompt to the worker
             worker.send({ prompt });
         } catch (error) {
