@@ -73,7 +73,7 @@ io.on('connection', async (socket) => {
         console.log('Received data:', data);
 
         try {
-            let { message } = data;
+            let { message, preprompt } = data;
 
             if (!message) {
                 console.error('Message is required.');
@@ -87,7 +87,7 @@ io.on('connection', async (socket) => {
             context = updateContext(context, `${message}`, '');
 
             // Build the full prompt with the last message only
-            const prompt = buildPrompt(prePromptContent, `${message}`);
+            const prompt = buildPrompt(preprompt, `${message}`);
 
             // Send the prompt to the worker
             worker.send({ prompt });

@@ -3,23 +3,20 @@ var socket = io();
 
 // Function to send a message to the server
 function sendMessage() {
-  console.log('SendMessage function called'); // Debug log
   var message = document.getElementById('message').value;
+  var preprompt = document.getElementById('preprompt').value;
 
   if (message.trim() !== '') {
-    console.log('Sending message:', { message }); // Debug log
-    socket.emit('chat message', { message });
-  } else {
-    console.log('Message is empty'); // Debug log
+    socket.emit('chat message', { message, preprompt });
   }
 
   // Clear input fields after sending
   document.getElementById('message').value = '';
+  document.getElementById('preprompt').value = '';
 }
 
 // Listen for 'chat error' events from the server
 socket.on('chat error', function(err) {
-  console.log('Received chat error:', err); // Debug log
   var node = document.createElement('p');
   var textnode = document.createTextNode('Error: ' + err);
   node.style.color = 'red';
@@ -46,13 +43,4 @@ socket.on('chat message', function(msg) {
     node.appendChild(textnode);
     document.getElementById('ai-reply').appendChild(node);
     lastReply = msg; // Store the last reply
-});
-
-$('form').submit(function(e) {
-    e.preventDefault(); // Prevents page reloading
-    socket.emit('chat message', {
-        message: $('#message').val() // Only send message now
-    });
-    $('#message').val('');
-    return false;
 });

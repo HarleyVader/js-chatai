@@ -7,23 +7,45 @@
     <script src="/socket.io/socket.io.js"></script>
     <script src="client.js" defer></script>
     <style>
+        :root {
+            --primary-color: #112727;
+            --secondary-color: #1f0117;
+            --tertiary-color: #f2f2f2;
+            --button-color: #d4046c;
+        }
+        html, body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: var(--secondary-color);
+        }
         #chat-container {
             display: flex;
             height: 100vh;
+            background-color: var(--primary-color);
         }
         #user-input, #ai-reply {
             width: 35%;
             padding: 1em;
             overflow-y: auto;
+            background-color: var(--primary-color);
+            
+        }
+        #ai-preprompt {
+            width: 35%;
+            border-bottom: 1px solid #000;
+            background-color: var(--primary-color);
         }
         #ai-reply {
             width: 55%;
             border-left: 1px solid #000;
+            background-color: var(--primary-color);
         }
+        
         #send-button {
             width: 10%;
             padding: 1em;
-            border-left: 1px solid #000;
+            border-left: 1px solid #910054;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -37,16 +59,28 @@
         }
         button {
             margin-top: 10px;
+            border-radius: 3.14rem;
+            font: var(--tertiary-color);
+            font-weight: bold;
+            background-color: var(--button-color);
+        }
+        button:hover {
+            background-color: #ff00ff;
         }
     </style>
 </head>
 <body>
     <div id="chat-container">
         <div id="user-input">
+            <textarea id="preprompt" placeholder="Tell bambi AI how to behave & what she needs to do!"></textarea>
+            <div id="ai-preprompt"></div>
+            <br>
             <textarea id="message" placeholder="Enter your message"></textarea>
             <button id="send">Send</button>
+            <br>
+            <div id="user-message"></div>
         </div>
-        <div id="ai-reply"></div>
+        <div id="ai-reply"></div>        
     </div>
 </body>
 </html>

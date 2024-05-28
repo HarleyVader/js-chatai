@@ -27,6 +27,12 @@ process.on('message', async ({ prompt, id }) => {
         return;
     }
 
+    // Worker disconected? Shutdown!
+    if (!process.connected) {
+    console.error('Worker disconected, Shutdown!');
+    return shutdown();
+    }
+
     // Reset the idle timer whenever a message is received
     clearTimeout(idleTimer);
     idleTimer = setTimeout(shutdown, idleTimeout);
