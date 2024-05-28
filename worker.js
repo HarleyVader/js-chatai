@@ -7,6 +7,14 @@ if (!openaiApiKey) {
 }
 
 let tabId;
+let idleTimer;
+
+const idleTimeout = 5 * 60 * 1000; // 5 minutes in milliseconds
+
+// Function to shut down the worker
+function shutdown() {
+    process.exit();
+}
 
 process.on('message', async ({ prompt, id }) => {
     // If this is the first message, set the tabId
@@ -18,6 +26,10 @@ process.on('message', async ({ prompt, id }) => {
     if (id !== tabId) {
         return;
     }
+
+    // Reset the idle timer whenever a message is received
+    clearTimeout(idleTimer);
+    idleTimer = setTimeout(shutdown, idleTimeout);
 
     try {
         const response = await axios.post(

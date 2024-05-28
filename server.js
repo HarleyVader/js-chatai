@@ -90,13 +90,8 @@ io.on('connection', (socket) => {
     });
 });
 
-// Add the /bambi endpoint
-app.get('/bambi', (req, res) => {
-    res.send('Hello Bambi');
-    });
-
 server.listen(port, () => {
-    console.log(`Server is running on https://bambisleep.chat:${port}`);
+    console.log(`Server is running on: ${port}`);
 }).on('error', (err) => {
     console.error('Error occurred while starting the server:', err);
 });
