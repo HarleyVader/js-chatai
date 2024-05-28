@@ -25,6 +25,13 @@ function buildPrompt(prePromptContent, lastMessage) {
     return `${prePromptContent}\n${lastMessage}`;
 }
 
+function updateContext(context, userInput, botOutput) {
+    let updatedContext = {...context};
+    updatedContext.userInput = userInput;
+    updatedContext.botOutput = botOutput;
+    return updatedContext;
+}
+
 io.on('connection', (socket) => {
     console.log('A user connected');
 
@@ -32,12 +39,14 @@ io.on('connection', (socket) => {
     const worker = child_process.fork('./worker.js');
 
     let conversation = [];
+    let context = {};
 
     worker.on('message', (response) => {
         console.log('OpenAI API Response:', response);
 
         const result = response.choices[0].text.trim();
-        conversation.push(`${result}`); // Add the model's response to the conversation
+        conversation.push(`Bot: ${result}`); // Add the model's response to the conversation
+        context = updateContext(context, '', `${result}`);
 
         if (conversation.length > 10) {
             console.log('Resetting conversation context...');
@@ -71,10 +80,11 @@ io.on('connection', (socket) => {
             const prePromptContent = fs.readFileSync(templatePath, 'utf8');
 
             // Add the new message to the conversation history
-            conversation.push(`You: ${message}`);
+            conversation.push(`${message}`);
+            context = updateContext(context, `${message}`, '');
 
             // Build the full prompt with the last message only
-            const prompt = buildPrompt(prePromptContent, `You: ${message}`);
+            const prompt = buildPrompt(prePromptContent, `${message}`);
 
             // Send the prompt to the worker
             worker.send({ prompt });
