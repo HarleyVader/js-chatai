@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bambi Sleep Chat AI by Brandynette</title>
+    <title>Bambi Sleep Chat AI</title>
     <script src="/socket.io/socket.io.js"></script>
     <script src="client.js" defer></script>
     <style>
@@ -37,6 +37,7 @@
             background-color: var(--primary-color);
             color: var(--tertiary-color);
             margin-top: 1em;
+            padding-top: 1em;
             padding-bottom: 1em;
         }
         #ai-reply {
@@ -75,12 +76,12 @@
 <body>
     <div id="chat-container">
         <div id="user-input">
-            <textarea id="preprompt" placeholder="Tell bambi AI how to behave & what she needs to do!"></textarea>
+            <textarea id="preprompt" oninput="autoExpand(this)" placeholder="Tell bambi AI how to behave & what she needs to do!"></textarea>
             <button id="set">Set</button>
             <br>
             <div id="ai-preprompt"></div>
             <br>
-            <textarea id="message" placeholder="Enter your message"></textarea>
+            <textarea id="message" oninput="autoExpand(this)" placeholder="Enter your message"></textarea>
             <button id="send">Send</button>
             <br>
             <div id="user-message"></div>

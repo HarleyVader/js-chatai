@@ -48,7 +48,7 @@ io.on('connection', async (socket) => {
     worker.on('message', (response) => {
         console.log('OpenAI API Response:', response);
 
-        const result = response.choices[0].text.trim();
+        const result = response.choices[0].message.content.trim();
         conversation.push(`${result}`); // Add the model's response to the conversation
         context = updateContext(context, '', `${result}`);
 
@@ -123,7 +123,6 @@ io.on('connection', async (socket) => {
         worker.on('error', (error) => {
             console.log('Worker encountered an error:', error);
         });
-    });
 
     socket.on('disconnect', () => {
         console.log('A user disconnected');

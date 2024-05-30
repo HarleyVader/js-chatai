@@ -24,7 +24,7 @@ process.on('message', async ({ prompt, id }) => {
 
     // If the ID of the incoming message doesn't match the tabId, ignore the message
     if (id !== tabId) {
-        return;
+        return shutdown();
     }
 
     // Worker disconected? Shutdown!
@@ -37,24 +37,19 @@ process.on('message', async ({ prompt, id }) => {
     clearTimeout(idleTimer);
     idleTimer = setTimeout(shutdown, idleTimeout);
 
-    try {
-        const response = await axios.post(
-            'https://api.openai.com/v1/completions',
+    async function query(data) {
+        const response = await fetch(
+            "https://api-inference.huggingface.co/models/UnfilteredAI/NSFW-gen-v2.1",
             {
-                model: 'gpt-3.5-turbo-instruct', // Using the specified model
-                prompt: prompt,
-                max_tokens: 300
-            },
-            {
-                headers: {
-                    'Authorization': `Bearer ${openaiApiKey}`,
-                    'Content-Type': 'application/json',
-                },
+                headers: { Authorization: "Bearer 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" },
+                method: "POST",
+                body: JSON.stringify(data),
             }
         );
-
-        process.send(response.data);
-    } catch (error) {
-        console.error('OpenAI request failed:', error);
+        const result = await response.blob();
+        return result;
     }
+    query({"inputs": "Astronaut riding a horse"}).then((response) => {
+        // Use image
+    });
 });

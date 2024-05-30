@@ -1,6 +1,16 @@
 // Connect to the server
 var socket = io();
 
+function autoExpand(element) {
+  element.style.height = 'inherit';
+  const computed = window.getComputedStyle(element);
+  const height = parseInt(computed.getPropertyValue('border-top-width'), 10)
+               + parseInt(computed.getPropertyValue('border-bottom-width'), 10)
+               + element.scrollHeight;
+               
+  element.style.height = height + 'px';
+}
+
 // Function to send a message to the server
 function sendMessage() {
   var message = document.getElementById('message').value;
