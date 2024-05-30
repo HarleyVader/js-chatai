@@ -105,11 +105,24 @@ io.on('connection', async (socket) => {
             const prompt = `${preprompt}\n${message}`;
 
             // Send the prompt to the worker
-            worker.send({ prompt });
+            try {
+                worker.send({ prompt });
+            } catch (error) {
+                console.error('Failed to send message to worker:', error);
+            }
+
         } catch (error) {
             console.error('OpenAI request failed:', error);
             socket.emit('chat error', 'Failed to get a response from OpenAI.');
         }
+
+        worker.on('exit', (code) => {
+            console.log(`Worker exited with code ${code}`);
+        });
+        
+        worker.on('error', (error) => {
+            console.log('Worker encountered an error:', error);
+        });
     });
 
     socket.on('disconnect', () => {
